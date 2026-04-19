@@ -7,21 +7,16 @@ const enums_1 = require("../enums");
 class RedisService {
     client;
     constructor() {
-        this.client = (0, redis_1.createClient)({
-            url: config_1.REDIS_URI
-        });
+        this.client = (0, redis_1.createClient)({ url: config_1.REDIS_URI });
+        this.handleEvent();
     }
     handleEvent = () => {
         this.client.on("error", (error) => { console.error("Redis error:", error); });
         this.client.on("Ready", () => { console.log("Redis is ready"); });
     };
     connect = async () => {
-        try {
-            await this.client.connect();
-        }
-        catch (error) {
-            console.error("Redis connection error:", error);
-        }
+        await this.client.connect();
+        console.log("connected to redis");
     };
     otpKey = ({ email, subject = enums_1.EmailEnum.CONFIRM_EMAIL }) => {
         return `OTP::User::${email}::${subject}`;

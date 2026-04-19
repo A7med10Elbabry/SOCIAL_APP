@@ -14,6 +14,10 @@ router.get("/", (0, middleware_1.authentication)(), (0, middleware_1.authorizati
     const data = await user_service_1.default.profile(req.user);
     (0, response_1.successResponse)({ res, data });
 });
+router.delete("/hardDelete", (0, middleware_1.authentication)(), async (req, res, next) => {
+    const status = await user_service_1.default.hardDelete(req.user);
+    return (0, response_1.successResponse)({ res, status });
+});
 router.post("/logout", (0, middleware_1.authentication)(), async (req, res, next) => {
     const status = await user_service_1.default.logout(req.body, req.user, req.decoded);
     return (0, response_1.successResponse)({ res, status });

@@ -5,15 +5,18 @@ import { redisService, RedisService } from "../../common/service";
 import { ACCESS_EXPIRES_IN, REFRESH_EXPIRSES_IN } from "../../config/config";
 import { TokenService } from "../../common/service/token.service";
 import { ConflictException } from "../../common/exceptions";
+import { UserRepository } from "../../DB/repository";
 
 
 
 class UserService{
     private readonly redis: RedisService
     private readonly tokenService: TokenService;
+    private readonly userRepository : UserRepository
     constructor(){
         this.redis =  redisService
         this.tokenService = new TokenService()
+        this.userRepository = new UserRepository()
     }
 
 
@@ -39,6 +42,12 @@ class UserService{
     return status
 }
 
+
+
+        async hardDelete(user: HydratedDocument<IUSer>){
+        await this.userRepository.deleteOne({filter: {_id: user._id, force:false}})
+        return 200;
+    }
 
    async rotateToken (user: HydratedDocument<IUSer>, {jti, iat, sub}: {jti: string, iat: number, sub: string}, issuer: string){
     if ((iat + ACCESS_EXPIRES_IN)* 1000 >= Date.now() + (30000)) {

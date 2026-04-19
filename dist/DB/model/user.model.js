@@ -17,11 +17,14 @@ const UserSchema = new mongoose_1.Schema({
     confirmEmail: { type: Date },
     changeCredentialsTime: { type: Date },
     DOB: { type: Date },
+    deletedAt: { type: Date },
+    resortedAt: { type: Date }
 }, {
     timestamps: true,
     strict: true,
     strictQuery: true,
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
 UserSchema.virtual("username").set(function (value) {
     const [firstName, lastName] = value.split(" ") || [];
@@ -29,5 +32,24 @@ UserSchema.virtual("username").set(function (value) {
     this.lastName = lastName;
 }).get(function () {
     return `${this.firstName} ${this.lastName}`;
+});
+UserSchema.pre("findOne", function () {
+    console.log(this.getQuery());
+    const query = this.getQuery();
+    if (query.paranoid === false) {
+        this.setQuery({ ...this.getQuery() });
+    }
+    else {
+        this.setQuery({ ...this.getQuery(), deletedAt: { $exists: false } });
+    }
+});
+UserSchema.pre("deleteOne", function () {
+    console.log(this.getQuery());
+    if (this.getQuery().force === false) {
+        this.setQuery({ ...this.getQuery() });
+    }
+    else {
+        this.setQuery({ ...this.getQuery(), deletedAt: Date.now() });
+    }
 });
 exports.UserModel = mongoose_1.models.User || (0, mongoose_1.model)('User', UserSchema);

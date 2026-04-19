@@ -5,12 +5,15 @@ const service_1 = require("../../common/service");
 const config_1 = require("../../config/config");
 const token_service_1 = require("../../common/service/token.service");
 const exceptions_1 = require("../../common/exceptions");
+const repository_1 = require("../../DB/repository");
 class UserService {
     redis;
     tokenService;
+    userRepository;
     constructor() {
         this.redis = service_1.redisService;
         this.tokenService = new token_service_1.TokenService();
+        this.userRepository = new repository_1.UserRepository();
     }
     async profile(user) {
         return user.toJSON();
@@ -29,6 +32,10 @@ class UserService {
                 break;
         }
         return status;
+    }
+    async hardDelete(user) {
+        await this.userRepository.deleteOne({ filter: { _id: user._id, force: false } });
+        return 200;
     }
     async rotateToken(user, { jti, iat, sub }, issuer) {
         if ((iat + config_1.ACCESS_EXPIRES_IN) * 1000 >= Date.now() + (30000)) {

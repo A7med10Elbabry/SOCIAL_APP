@@ -12,23 +12,20 @@ type RedisKeyType = {
 export class RedisService{
     private readonly client: RedisClientType
     constructor(){
-        this.client =  createClient({
-            url: REDIS_URI
-        })
-    }
-    handleEvent = () =>{
+        this.client = createClient({url: REDIS_URI})
+        this.handleEvent()
+    } 
+    
+      private handleEvent = () =>{
         this.client.on("error", (error) => {console.error("Redis error:", error);})
         this.client.on("Ready", () => {console.log("Redis is ready");})
     }
-     connect = async () =>{
-        try {
-            await this.client.connect();
-        } catch (error) {
-            console.error("Redis connection error:", error);
-        }
+    connect = async () =>{
+        await this.client.connect()
+        console.log("connected to redis");
     }
 
-    otpKey = ({ email, subject = EmailEnum.CONFIRM_EMAIL }: RedisKeyType): string => {
+ otpKey = ({ email, subject = EmailEnum.CONFIRM_EMAIL }: RedisKeyType): string => {
   return `OTP::User::${email}::${subject}`
 }
 
@@ -151,6 +148,7 @@ return ttl ?  await this.client.setEx(key, ttl, data) : await this.client.set(ke
             return -2;
         }
     }
+
 }
 
 

@@ -23,4 +23,6 @@ export interface IUSer {
     DOB?:Date;
     createdAt:Date;
     updatedAt:Date;
+    deletedAt?:Date;
+    resortedAt?:Date;
 }

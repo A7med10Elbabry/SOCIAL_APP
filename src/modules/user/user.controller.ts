@@ -17,7 +17,10 @@ router.get("/",
     successResponse({res, data})
 })
 
-
+router.delete("/hardDelete", authentication(), async (req,res,next)=>{
+    const status = await UserService.hardDelete( req.user)
+    return successResponse({res, status})
+})
 
 router.post("/logout", authentication(), async (req,res,next)=>{
     const status = await UserService.logout(req.body, req.user, req.decoded as {jti: string, iat: number, sub: string})

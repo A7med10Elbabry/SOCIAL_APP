@@ -10,7 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const middleware_1 = require("./middleware");
 const config_1 = require("./config/config");
 const connection_db_1 = __importDefault(require("./DB/connection.db"));
-const services_1 = require("./common/services");
+const service_1 = require("./common/service");
 const user_1 = require("./modules/user");
 const bootstrap = async () => {
     const app = (0, express_1.default)();
@@ -25,7 +25,7 @@ const bootstrap = async () => {
     });
     app.use(middleware_1.globalErrorHandler);
     await (0, connection_db_1.default)();
-    await services_1.redisService.connect();
+    await service_1.redisService.connect();
     app.listen(config_1.PORT, () => {
         console.log(`Server is running on port ${config_1.PORT}`);
     });

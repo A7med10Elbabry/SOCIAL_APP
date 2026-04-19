@@ -4,8 +4,9 @@ import cors from "cors"
 import { globalErrorHandler } from "./middleware"
 import { PORT } from "./config/config"
 import connectDB from "./DB/connection.db"
-import { redisService } from "./common/services"
+import { redisService } from "./common/service"
 import { userRouter } from "./modules/user"
+
 
 
 export const bootstrap = async () => {
