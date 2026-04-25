@@ -33,6 +33,9 @@ router.get("/rotate" ,authentication(TokenTypeEnum.REFRESH), async (req,res,next
     return successResponse({res, data: result})
 })
 
-
+router.delete("/softDelete", authentication(), async (req,res,next)=>{
+    const status = await UserService.softDelete( req.user)
+    return successResponse({res, status})
+})
 
 export default router

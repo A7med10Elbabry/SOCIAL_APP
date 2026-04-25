@@ -34,7 +34,7 @@ class UserService {
         return status;
     }
     async hardDelete(user) {
-        await this.userRepository.deleteOne({ filter: { _id: user._id, force: false } });
+        await this.userRepository.deleteOne({ filter: { _id: user._id, force: true } });
         return 200;
     }
     async rotateToken(user, { jti, iat, sub }, issuer) {
@@ -43,6 +43,10 @@ class UserService {
         }
         await this.tokenService.createRevokeToken({ userId: sub, jti, ttl: iat + config_1.REFRESH_EXPIRSES_IN });
         return await this.tokenService.CreateLoginCredentials(user, issuer);
+    }
+    softDelete(user) {
+        this.userRepository.updateOne({ filter: { _id: user._id }, update: { deletedAt: new Date() } });
+        return 200;
     }
 }
 exports.default = new UserService();

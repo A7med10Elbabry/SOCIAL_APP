@@ -101,9 +101,9 @@ public async signup({email, password, username, phone}: SignupDto): Promise<IUSe
     const user= await this.UserRepository.createOne({ 
         data :{
             email,
-            password: await generate_hash({plain_text:password})
-            ,username,
-            phone: phone? await encrypt(phone) : undefined
+            password,
+            username,
+            phone 
         }
     })
 

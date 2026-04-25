@@ -1,7 +1,8 @@
-import { model, models, Schema } from "mongoose";
+import { HydratedDocument, model, models, Schema } from "mongoose";
 import { IUSer } from "../../common/interfaces";
 import { GenderEnum, ProviderEnum, RoleEnum } from "../../common/enums";
 import { any } from "zod";
+import { encrypt, generate_hash } from "../../common/utils/security";
 
 
 
@@ -39,6 +40,18 @@ UserSchema.virtual("username").set(function(value: string){
     return `${this.firstName} ${this.lastName}`
 })
 
+
+UserSchema.pre("save", async function(){
+    if (this.isModified("password")) {
+        this.password = await generate_hash({plain_text:this.password})
+    }
+
+    if (this.phone && this.isModified("phone")) {
+        this.phone = await encrypt(this.phone as string)
+    }
+})
+
+
 UserSchema.pre("findOne", function(){
     console.log(this.getQuery())
     const query = this.getQuery()
@@ -48,13 +61,39 @@ UserSchema.pre("findOne", function(){
         this.setQuery({ ...this.getQuery(), deletedAt: {$exists: false} })
     }
 })
-UserSchema.pre("deleteOne", function(){
-    console.log(this.getQuery())
-    if(this.getQuery().force === false){
-        this.setQuery({ ...this.getQuery() })
+
+
+
+UserSchema.pre(["updateOne", "findOneAndUpdate"], function(){
+    const update = this.getUpdate() as HydratedDocument<IUSer>
+    if(update.deletedAt){
+        this.setUpdate({...update, $unset: {resortedAt:1}})
+    }
+    if(update.resortedAt){
+        this.setUpdate({...update, $unset: {deletedAt:1}})
+        this.setQuery({ ...this.getQuery(), deletedAt: {$exists: true} })
+    }
+    const query = this.getQuery()
+    if(query.paranoid === false){
+    this.setQuery({ ...query })
     }else{
-        this.setQuery({ ...this.getQuery(), deletedAt: Date.now() });
-}
+        this.setQuery({ deletedAt: {$exists: false},  ...query })
+    }
+})
+
+
+
+
+
+
+UserSchema.pre(["deleteOne", "findOneAndDelete"], function(){
+
+    const query = this.getQuery()
+    if(query.force === true){
+    this.setQuery({ ...query })
+    }else{
+        this.setQuery({ deletedAt: {$exists: true},  ...query })
+    }
 })
 
 export const UserModel = models.User || model<IUSer>('User', UserSchema)

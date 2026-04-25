@@ -26,4 +26,8 @@ router.get("/rotate", (0, middleware_1.authentication)(enums_1.TokenTypeEnum.REF
     const result = await user_service_1.default.rotateToken(req.user, req.decoded, `${req.protocol}://${req.host}`);
     return (0, response_1.successResponse)({ res, data: result });
 });
+router.delete("/softDelete", (0, middleware_1.authentication)(), async (req, res, next) => {
+    const status = await user_service_1.default.softDelete(req.user);
+    return (0, response_1.successResponse)({ res, status });
+});
 exports.default = router;

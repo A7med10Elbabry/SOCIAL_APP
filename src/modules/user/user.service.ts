@@ -45,7 +45,7 @@ class UserService{
 
 
         async hardDelete(user: HydratedDocument<IUSer>){
-        await this.userRepository.deleteOne({filter: {_id: user._id, force:false}})
+        await this.userRepository.deleteOne({filter: {_id: user._id, force:true }})
         return 200;
     }
 
@@ -57,6 +57,12 @@ class UserService{
        await this.tokenService.createRevokeToken({userId: sub, jti, ttl: iat + REFRESH_EXPIRSES_IN})
         return await this.tokenService.CreateLoginCredentials(user, issuer)
 }
+
+public softDelete(user: HydratedDocument<IUSer>){
+     this.userRepository.updateOne({filter: {_id: user._id}, update: {deletedAt: new Date()}})
+     return 200
+}
+
 }
 
 

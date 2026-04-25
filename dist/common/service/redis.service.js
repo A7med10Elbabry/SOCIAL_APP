@@ -11,8 +11,8 @@ class RedisService {
         this.handleEvent();
     }
     handleEvent = () => {
-        this.client.on("error", (error) => { console.error("Redis error:", error); });
-        this.client.on("Ready", () => { console.log("Redis is ready"); });
+        this.client.on("error", (error) => { console.log("Redis Error:", error); });
+        this.client.on("ready", () => { console.log("Redis is ready"); });
     };
     connect = async () => {
         await this.client.connect();

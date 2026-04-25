@@ -74,9 +74,9 @@ class AuthService {
         const user = await this.UserRepository.createOne({
             data: {
                 email,
-                password: await (0, security_1.generate_hash)({ plain_text: password }),
+                password,
                 username,
-                phone: phone ? await (0, security_1.encrypt)(phone) : undefined
+                phone
             }
         });
         await this.sendEmailOtp({ email, subject: enums_1.EmailEnum.CONFIRM_EMAIL, title: "Verfiy Email" });
