@@ -1,7 +1,6 @@
 import { HydratedDocument, model, models, Schema } from "mongoose";
 import { IUSer } from "../../common/interfaces";
 import { GenderEnum, ProviderEnum, RoleEnum } from "../../common/enums";
-import { any } from "zod";
 import { encrypt, generate_hash } from "../../common/utils/security";
 
 

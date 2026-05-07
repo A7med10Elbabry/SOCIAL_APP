@@ -12,6 +12,10 @@ const config_1 = require("./config/config");
 const connection_db_1 = __importDefault(require("./DB/connection.db"));
 const service_1 = require("./common/service");
 const user_1 = require("./modules/user");
+const response_1 = require("./common/response");
+const node_stream_1 = require("node:stream");
+const node_util_1 = require("node:util");
+const s3WriteStream = (0, node_util_1.promisify)(node_stream_1.pipeline);
 const bootstrap = async () => {
     const app = (0, express_1.default)();
     app.use((0, cors_1.default)(), express_1.default.json());
@@ -20,6 +24,25 @@ const bootstrap = async () => {
     });
     app.use("/auth", modules_1.authRouter);
     app.use("/user", user_1.userRouter);
+    app.get("/uploads/*path", async (req, res) => {
+        const { download, fileName } = req.query;
+        const { path } = req.params;
+        const Key = path.join("/");
+        const { Body, ContentType } = await service_1.s3Service.getAsset({ Key });
+        res.setHeader("Content-Type", ContentType || "application/octet-stream");
+        res.set("Cross-Origin-Resource-Policy", "cross-origin");
+        if (download === "true") {
+            res.setHeader("Content-Disposition", `attachment; filename="${fileName || Key.split("/").pop()}"`);
+        }
+        return await s3WriteStream(Body, res);
+    });
+    app.get("/presigned/*path", async (req, res) => {
+        const { download, fileName } = req.query;
+        const { path } = req.params;
+        const Key = path.join("/");
+        const url = await service_1.s3Service.createPresignedFetchLink({ Key, download, fileName });
+        return (0, response_1.successResponse)({ res, data: { url } });
+    });
     app.use("/*dummy", (req, res) => {
         res.status(404).json({ message: "page not found" });
     });

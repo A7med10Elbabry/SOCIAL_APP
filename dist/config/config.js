@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.instegram = exports.twitterLink = exports.facebookLink = exports.SALT_ROUND = exports.APPLICATION_NAME = exports.EMAIL_APP = exports.EMAIL_APP_PASSWORD = exports.REDIS_URI = exports.REFRESH_EXPIRSES_IN = exports.ACCESS_EXPIRES_IN = exports.USER_REFRESH_TOKEN_SECERET_KEY = exports.USER_TOKEN_SECERET_KEY = exports.SYSTEM_REFRESH_TOKEN_SECERET_KEY = exports.SYSTEM_TOKEN_SECERET_KEY = exports.DB_URI = exports.PORT = exports.NODE_ENV = void 0;
+exports.AWS_EXPIRES_IN = exports.AWS_SECRET_ACCESS_KEY = exports.AWS_ACCESS_KEY_ID = exports.AWS_BUCKET_NAME = exports.AWS_REGION = exports.instegram = exports.twitterLink = exports.facebookLink = exports.SALT_ROUND = exports.APPLICATION_NAME = exports.EMAIL_APP = exports.EMAIL_APP_PASSWORD = exports.REDIS_URI = exports.REFRESH_EXPIRSES_IN = exports.ACCESS_EXPIRES_IN = exports.USER_REFRESH_TOKEN_SECERET_KEY = exports.USER_TOKEN_SECERET_KEY = exports.SYSTEM_REFRESH_TOKEN_SECERET_KEY = exports.SYSTEM_TOKEN_SECERET_KEY = exports.DB_URI = exports.PORT = exports.NODE_ENV = void 0;
 const node_path_1 = require("node:path");
 const dotenv_1 = require("dotenv");
 exports.NODE_ENV = process.env.NODE_ENV;
@@ -23,3 +23,8 @@ exports.facebookLink = process.env.facebookLink;
 exports.twitterLink = process.env.twitterLink;
 exports.instegram = process.env.instegram;
 console.log({ SALT_ROUND: exports.SALT_ROUND });
+exports.AWS_REGION = process.env.AWS_REGION;
+exports.AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
+exports.AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+exports.AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+exports.AWS_EXPIRES_IN = parseInt(process.env.AWS_EXPIRES_IN || "120");

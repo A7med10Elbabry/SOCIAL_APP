@@ -10,12 +10,44 @@ class UserService {
     redis;
     tokenService;
     userRepository;
+    s3;
     constructor() {
         this.redis = service_1.redisService;
         this.tokenService = new token_service_1.TokenService();
         this.userRepository = new repository_1.UserRepository();
+        this.s3 = service_1.s3Service;
     }
     async profile(user) {
+        return user.toJSON();
+    }
+    async profileImage(file, user) {
+        const oldPic = user.profilePicture;
+        const { Key } = await this.s3.uploadLargeAsset({
+            file,
+            path: `users/${user._id.toString()}/profile`
+        });
+        user.profilePicture = Key;
+        await user.save();
+        if (oldPic) {
+            await this.s3.deleteAsset({
+                Key: oldPic
+            });
+        }
+        return user.toJSON();
+    }
+    async profileCoverImages(files, user) {
+        const oldUrls = user.profileCoverPicture;
+        const urls = await this.s3.uploadAssets({
+            files,
+            path: `users/${user._id.toString()}/profile/cover`
+        });
+        user.profileCoverPicture = urls;
+        await user.save();
+        if (oldUrls) {
+            await this.s3.deleteAssets({
+                Keys: oldUrls.map((url) => { return { Key: url }; })
+            });
+        }
         return user.toJSON();
     }
     async logout({ flag }, user, { jti, iat, sub }) {

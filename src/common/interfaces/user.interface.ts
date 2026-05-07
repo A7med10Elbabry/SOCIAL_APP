@@ -14,7 +14,7 @@ export interface IUSer {
     confirmPassword?:string;
     phone?:string;
     profilePicture?:string;
-    profileCoverPicture?:string;
+    profileCoverPicture?:string[];
     gender:GenderEnum;
     role:RoleEnum;
     provider:ProviderEnum;

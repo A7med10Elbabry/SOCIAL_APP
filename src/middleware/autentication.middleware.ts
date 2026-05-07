@@ -1,7 +1,7 @@
 import type{ NextFunction, Request, Response } from "express"
 import {  UnauthorizedException } from "../common/exceptions"
 import {TokenTypeEnum } from "../common/enums"
-import { TokenService } from "../common/services"
+import { TokenService } from "../common/service"
 
 
 export const authentication =  (tokenType:TokenTypeEnum = TokenTypeEnum.ACCESS)=>{

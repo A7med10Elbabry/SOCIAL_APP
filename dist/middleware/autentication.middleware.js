@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authentication = void 0;
 const exceptions_1 = require("../common/exceptions");
 const enums_1 = require("../common/enums");
-const services_1 = require("../common/services");
+const service_1 = require("../common/service");
 const authentication = (tokenType = enums_1.TokenTypeEnum.ACCESS) => {
-    const tokenService = new services_1.TokenService();
+    const tokenService = new service_1.TokenService();
     return async (req, res, next) => {
         if (!req.headers.authorization) {
             throw new exceptions_1.UnauthorizedException("missing authorization key");
