@@ -9,6 +9,7 @@ import { userRouter } from "./modules/user"
 import { successResponse } from "./common/response"
 import { pipeline } from "node:stream"
 import { promisify } from "node:util"
+import { notifactionService } from "./common/service/notifaction.service"
 
 
 const s3WriteStream = promisify(pipeline)
@@ -18,12 +19,13 @@ export const bootstrap = async () => {
 const app = express()
 
 // global middlewares
-app.use(cors(),express.json())
+app.use(express.json(), cors())
 
 // base routing
 app.get("/", (req:Request, res:Response) => {
     res.json({ message: "Hello World" })
 })
+
 // application routing
 
 app.use("/auth", authRouter)

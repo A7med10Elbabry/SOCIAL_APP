@@ -9,6 +9,7 @@ import {RedisService, redisService} from "../../common/service"
 import { EmailEnum, ProviderEnum } from "../../common/enums"
 import {createRandomOtp} from "../../common/utils"
 import { TokenService } from "../../common/service/token.service"
+import { notifactionService, NotifactionService } from "../../common/service/notifaction.service"
 
 
 
@@ -19,18 +20,20 @@ class AuthService {
     private readonly UserRepository: UserRepository;
     private readonly redis: RedisService ;
     private readonly tokenService: TokenService;
+    private readonly notifaction: NotifactionService;
     constructor(){
         this.UserRepository = new UserRepository()
         this.redis = redisService
+        this.notifaction = notifactionService
         this.tokenService = new TokenService()
     }
     
 
 
 
-  async login (inputs :LoginDto, issuer: string):Promise<IloginResopnse>  {
+  async login ({ email, password, FCM} :LoginDto, issuer: string):Promise<IloginResopnse>  {
     
-    const { email, password} = inputs
+  
     const user = await this.UserRepository.findOne({
         filter: {email, provider: ProviderEnum.SYSTEM, confirmedEmail: {$exists: true}}
     })
@@ -41,7 +44,20 @@ class AuthService {
     if(!await compare_hash({plain_text: password, cipher_text:user.password})){
         throw new NotFoundException("invalid login credentials")
     }
-    
+
+    if (FCM) {
+      await this.redis.addFCM(user._id, FCM);
+      const token = await this.redis.getFCMs(user._id) 
+      if (token?.length) {
+        await this.notifaction.sendNotifactions({
+          tokens: token,
+          data:{
+            title:"login successfully",
+            body:`Welcome back ${user.username}`
+          }
+        })
+      }
+    }
     return await this.tokenService.CreateLoginCredentials(user, issuer)
 }
 

@@ -11,7 +11,8 @@ export const resendConfirmEmail = {
 
 export const login = {
     body:resendConfirmEmail.body.safeExtend({
-        password:genralValidationFeilds.password
+        password:genralValidationFeilds.password,
+        FCM:z.string().optional()
     })
 }
 

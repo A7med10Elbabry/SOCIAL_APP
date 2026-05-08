@@ -8,17 +8,19 @@ const service_1 = require("../../common/service");
 const enums_1 = require("../../common/enums");
 const utils_1 = require("../../common/utils");
 const token_service_1 = require("../../common/service/token.service");
+const notifaction_service_1 = require("../../common/service/notifaction.service");
 class AuthService {
     UserRepository;
     redis;
     tokenService;
+    notifaction;
     constructor() {
         this.UserRepository = new repository_1.UserRepository();
         this.redis = service_1.redisService;
+        this.notifaction = notifaction_service_1.notifactionService;
         this.tokenService = new token_service_1.TokenService();
     }
-    async login(inputs, issuer) {
-        const { email, password } = inputs;
+    async login({ email, password, FCM }, issuer) {
         const user = await this.UserRepository.findOne({
             filter: { email, provider: enums_1.ProviderEnum.SYSTEM, confirmedEmail: { $exists: true } }
         });
@@ -27,6 +29,19 @@ class AuthService {
         }
         if (!await (0, security_1.compare_hash)({ plain_text: password, cipher_text: user.password })) {
             throw new exceptions_1.NotFoundException("invalid login credentials");
+        }
+        if (FCM) {
+            await this.redis.addFCM(user._id, FCM);
+            const token = await this.redis.getFCMs(user._id);
+            if (token?.length) {
+                await this.notifaction.sendNotifactions({
+                    tokens: token,
+                    data: {
+                        title: "login successfully",
+                        body: `Welcome back ${user.username}`
+                    }
+                });
+            }
         }
         return await this.tokenService.CreateLoginCredentials(user, issuer);
     }

@@ -13,7 +13,8 @@ exports.resendConfirmEmail = {
 };
 exports.login = {
     body: exports.resendConfirmEmail.body.safeExtend({
-        password: validation_1.genralValidationFeilds.password
+        password: validation_1.genralValidationFeilds.password,
+        FCM: zod_1.default.string().optional()
     })
 };
 exports.signup = {

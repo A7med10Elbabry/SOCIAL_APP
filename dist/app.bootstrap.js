@@ -18,7 +18,7 @@ const node_util_1 = require("node:util");
 const s3WriteStream = (0, node_util_1.promisify)(node_stream_1.pipeline);
 const bootstrap = async () => {
     const app = (0, express_1.default)();
-    app.use((0, cors_1.default)(), express_1.default.json());
+    app.use(express_1.default.json(), (0, cors_1.default)());
     app.get("/", (req, res) => {
         res.json({ message: "Hello World" });
     });

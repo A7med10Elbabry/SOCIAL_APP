@@ -1,3 +1,5 @@
 .env.development
 .env.production
 node_modules/
+src/config/app-notifaction-c4375-firebase-adminsdk-fbsvc-6a99604623.json
+dist/config/app-notifaction-c4375-firebase-adminsdk-fbsvc-6a99604623.json

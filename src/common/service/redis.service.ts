@@ -149,6 +149,33 @@ return ttl ?  await this.client.setEx(key, ttl, data) : await this.client.set(ke
         }
     }
 
+
+
+
+    fcmKey(userId: Types.ObjectId | string) {
+    return `user:FCM:${userId.toString()}`;
+}
+ async addFCM(userId: Types.ObjectId | string, FCMToken: string) {
+    return await this.client.sAdd(this.fcmKey(userId), FCMToken);
+}
+
+ async removeFCM(userId: Types.ObjectId | string, FCMToken: string) {
+    return await this.client.sRem(this.fcmKey(userId), FCMToken);
+}
+
+ async getFCMs(userId: Types.ObjectId | string) {
+    return await this.client.sMembers(this.fcmKey(userId));
+}
+
+ async hasFCMs(userId: Types.ObjectId | string) {
+    return await this.client.sCard(this.fcmKey(userId));
+}
+
+ async removeFCMUser(userId: Types.ObjectId | string) {
+    return await this.client.del(this.fcmKey(userId));
+}
+
+
 }
 
 
