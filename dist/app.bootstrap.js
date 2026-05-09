@@ -24,6 +24,7 @@ const bootstrap = async () => {
     });
     app.use("/auth", modules_1.authRouter);
     app.use("/user", user_1.userRouter);
+    app.use("/post", modules_1.postRouter);
     app.get("/uploads/*path", async (req, res) => {
         const { download, fileName } = req.query;
         const { path } = req.params;

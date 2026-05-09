@@ -1,5 +1,5 @@
 import express, {type Request, type Response} from "express"
-import { authRouter } from "./modules"
+import { authRouter, postRouter } from "./modules"
 import cors from "cors"
 import { globalErrorHandler } from "./middleware"
 import { PORT } from "./config/config"
@@ -9,8 +9,6 @@ import { userRouter } from "./modules/user"
 import { successResponse } from "./common/response"
 import { pipeline } from "node:stream"
 import { promisify } from "node:util"
-import { notifactionService } from "./common/service/notifaction.service"
-
 
 const s3WriteStream = promisify(pipeline)
 
@@ -30,6 +28,7 @@ app.get("/", (req:Request, res:Response) => {
 
 app.use("/auth", authRouter)
 app.use("/user", userRouter)
+app.use("/post", postRouter)
 app.get("/uploads/*path", async (req:Request, res:Response) => {
     const {download, fileName} = req.query as {download?: string, fileName?: string}
     const {path} = req.params as {path: string[]}

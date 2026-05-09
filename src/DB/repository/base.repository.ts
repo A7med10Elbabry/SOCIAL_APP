@@ -86,6 +86,41 @@ export abstract class BaseRepository <TRawDoc>{
 
 
 
+    async find({
+        filter,
+        projection, 
+        options
+    }:{
+    filter?: QueryFilter<TRawDoc>,
+    projection?: ProjectionType<TRawDoc> | null | undefined,
+    options?: QueryOptions<TRawDoc> & {lean: false} | null | undefined
+    }):Promise<HydratedDocument<IUSer> []>;
+
+    async find({
+        filter,
+        projection, 
+        options
+    }:{
+    filter?: QueryFilter<TRawDoc>,
+    projection?: ProjectionType<TRawDoc> | null | undefined,
+    options?: QueryOptions<TRawDoc>& {lean: true} | null | undefined
+    }):Promise<FlattenMaps<IUSer> []>;
+
+    async find({
+        filter,
+        projection, 
+        options
+    }:{
+    filter?: QueryFilter<TRawDoc>,
+    projection?: ProjectionType<TRawDoc> | null | undefined,
+    options?: QueryOptions<TRawDoc> | null | undefined
+    }):Promise<any>{
+        const doc = this.model.find(filter, projection)
+        if(options?.populate) doc.populate(options.populate as PopulateOptions[]);
+        if(options?.lean) doc.lean(options.lean);
+        return await doc.exec() 
+    }
+
 
     async findById({
         _id,

@@ -5,11 +5,10 @@ import { UserRepository } from "../../DB/repository"
 import { BadRequestException, ConflictException, NotFoundException } from "../../common/exceptions"
 import { compare_hash, generate_hash } from "../../common/utils/security"
 import { emailTemplete, sendEmail,emailEvent } from "../../common/email"
-import {RedisService, redisService} from "../../common/service"
+import {notifactionService, NotifactionService, RedisService, redisService} from "../../common/service"
 import { EmailEnum, ProviderEnum } from "../../common/enums"
 import {createRandomOtp} from "../../common/utils"
 import { TokenService } from "../../common/service/token.service"
-import { notifactionService, NotifactionService } from "../../common/service/notifaction.service"
 
 
 

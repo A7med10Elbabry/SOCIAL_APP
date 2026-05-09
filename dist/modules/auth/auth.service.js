@@ -8,7 +8,6 @@ const service_1 = require("../../common/service");
 const enums_1 = require("../../common/enums");
 const utils_1 = require("../../common/utils");
 const token_service_1 = require("../../common/service/token.service");
-const notifaction_service_1 = require("../../common/service/notifaction.service");
 class AuthService {
     UserRepository;
     redis;
@@ -17,7 +16,7 @@ class AuthService {
     constructor() {
         this.UserRepository = new repository_1.UserRepository();
         this.redis = service_1.redisService;
-        this.notifaction = notifaction_service_1.notifactionService;
+        this.notifaction = service_1.notifactionService;
         this.tokenService = new token_service_1.TokenService();
     }
     async login({ email, password, FCM }, issuer) {
